@@ -4,9 +4,16 @@
 
 
 #include <Windows.h>
-#include "InputSystem.h"
-#include "GraphicsSystem.h"
+#include "Input\InputSystem.h"
+#include "Graphics\GraphicsSystem.h"
 #include "foundation.hpp"
+#include "Graphics\Model.h"
+#include "ResourceLoader.h"
+
+#include <time.h>
+
+
+#include "GameClasses\Ship.hpp"
 
 class Engine {
 public:
@@ -32,7 +39,10 @@ private:
 
 	InputSystem* m_Input;
 	GraphicsSystem* m_Graphics;
-	
+	ResourceLoader* m_ResourceLoader;
+
+	Ship m_Ship; //TEMPORARY
+	clock_t m_clock;
 };
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

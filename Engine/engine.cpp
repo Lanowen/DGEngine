@@ -3,6 +3,7 @@
 Engine::Engine(){
 	m_Input = 0;
 	m_Graphics = 0;
+	m_ResourceLoader = 0;
 }
 
 Engine::Engine(const Engine& other){
@@ -30,15 +31,33 @@ bool Engine::Initialize(){
 
 	m_Input->Initialize();
 
+	m_ResourceLoader = new ResourceLoader();
+	if(!m_ResourceLoader){
+		return false;
+	}
+
+	result = m_ResourceLoader->Initialize();
+	if(!result){
+		return false;
+	}
+
 	m_Graphics = new GraphicsSystem;
 	if(!m_Graphics){
 		return false;
 	}
 
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, m_ResourceLoader);
 	if(!result){
 		return false;
 	}
+
+	m_Ship.Initialize(m_Graphics);
+
+	m_Graphics->camera->position = Vec3(0,0,-200);
+
+	m_Input->RegisterKeyboardHandler(&m_Ship);
+
+	m_clock = clock();
 
 	return true;
 }
@@ -78,6 +97,16 @@ void Engine::Run(){
 			done = true;
 		}
 		else{
+			m_Input->Update();
+			
+			clock_t temp = clock();
+			float deltaTime = (temp - m_clock)/(float)CLOCKS_PER_SEC;
+			m_clock = temp;
+
+			if(deltaTime != 0){
+				m_Ship.update(deltaTime);
+			}
+
 			result = Frame();
 			if(!result){
 				done = true;
@@ -89,16 +118,33 @@ void Engine::Run(){
 }
 
 bool Engine::Frame(){
-	bool result;
-
 	if(m_Input->IsKeyDown(VK_ESCAPE)){
 		return false;
 	}
 
-	result = m_Graphics->Frame();
-	if(!result){
+	try{
+
+		m_Graphics->BeginScene();
+
+
+		/*std::vector<Model*>::iterator itr = m_Models.begin();
+		for(;itr != m_Models.end(); itr++){
+			m_Graphics->Render(*itr);
+		}*/
+
+		m_Graphics->Render(reinterpret_cast<RenderObject*>(&m_Ship));
+
+
+		m_Graphics->EndScene();
+	}
+	catch(std::exception& e){
+
+		MessageBoxA(m_hwnd, e.what(), "Error", MB_OK);
+
 		return false;
 	}
+
+	
 	
 	return true;
 }

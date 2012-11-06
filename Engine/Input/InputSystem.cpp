@@ -22,6 +22,17 @@ void InputSystem::Initialize(){
 	return;
 }
 
+void InputSystem::Update(){
+	std::vector<IKeyboardHandler*>::iterator itr = m_keyboardHandlers.begin();
+	for(;itr != m_keyboardHandlers.end(); itr++){
+		(*itr)->HandleKeysDown(m_keys);
+	}
+}
+
+void InputSystem::RegisterKeyboardHandler(IKeyboardHandler* keyHandler){
+	m_keyboardHandlers.push_back(keyHandler);
+}
+
 void InputSystem::KeyDown(unsigned int input){
 	m_keys[input] = true;
 }
