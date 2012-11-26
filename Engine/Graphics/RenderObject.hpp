@@ -1,47 +1,64 @@
 #ifndef _RENDEROBJECT_HPP_
 #define _RENDEROBJECT_HPP_
 
-#include "Texture.h"
 #include "TextureShader.h"
-#include "..\GameObject.hpp"
+#include <GameObject.hpp>
 #include "Exceptions\RenderException.hpp"
+#include <functional>
+#include "D3DRenderer.h"
+#include "IRenderable.hpp"
 
-static enum ShaderType {
-	e_TextureShaded,
-	e_ColorShaded,
-	e_None
+template<class shader, class... otherShaders>
+class RenderObject : public IRenderable, public GameObject,	private shader, private otherShaders... {
+public:
+	RenderObject() {}
+	RenderObject(const RenderObject& other) {}
+	~RenderObject() {}
+
+	//virtual bool Render() { RenderToTarget(m_D3D->GetDeviceContext()); return true; }
+
+	virtual bool ShadeToTarget(ID3D11DeviceContext* deviceContext, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix) { return runShaders<shader, otherShaders...>(deviceContext, worldMatrix, viewMatrix, projectionMatrix); }
+
+	void setRenderTarget(D3DRenderer* D3D) { m_D3D = D3D; }
+
+private:
+
+	template<class s1>
+	bool runShaders(ID3D11DeviceContext* deviceContext, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix){
+		return s1::Shade(this, deviceContext, worldMatrix, viewMatrix, projectionMatrix);
+	}
+
+	template<class s1, class s2, class... sX>
+	bool runShaders(ID3D11DeviceContext* deviceContext, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix){
+		return runShaders<s1>(deviceContext, worldMatrix, viewMatrix, projectionMatrix) && runShaders<s2, sX...>(deviceContext, worldMatrix, viewMatrix, projectionMatrix);
+	}
+
+private:
+	D3DRenderer* m_D3D;
 };
 
-class ITexturedShaded {
+class TexturePass{
 public:
+	TexturePass() {};
+	TexturePass(const TexturePass& other) {};
+	~TexturePass() {};
+
+	static void Initialize(TextureShader* textureShader) {m_TextureShader = textureShader;}
+
 	virtual int GetIndexCount() = 0;
 	virtual ID3D11ShaderResourceView* GetTexture() = 0;
-};
 
-class RenderObject : public GameObject {
-public:
-	RenderObject() {};
-	RenderObject(const RenderObject& other) {};
-	~RenderObject() {};
+	bool Shade(RenderObject<TexturePass>* ro, ID3D11DeviceContext* deviceContext, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix){
+		D3DXMATRIX translation, rotation;
 
-	virtual void Render(ID3D11DeviceContext* deviceContext) = 0;
+		D3DXMatrixTranslation(&translation, ro->position.x, ro->position.y, ro->position.z);
+		D3DXMatrixRotationQuaternion(&rotation, &ro->rotation);
 
-	virtual const ShaderType getShaderType() {
-		return ShaderType::e_None;
+		return m_TextureShader->Render(deviceContext, GetIndexCount(), worldMatrix*rotation*translation, viewMatrix, projectionMatrix, GetTexture());
 	}
+
+private:
+	static TextureShader* m_TextureShader;
 };
-
-class TexturedRenderObject : public RenderObject, public ITexturedShaded {
-public:
-	TexturedRenderObject() {};
-	TexturedRenderObject(const TexturedRenderObject& other) {};
-	~TexturedRenderObject() {};
-
-	virtual const ShaderType getShaderType() {
-		return ShaderType::e_TextureShaded;
-	}
-};
-
-
 
 #endif

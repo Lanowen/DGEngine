@@ -34,6 +34,30 @@
     <Filter Include="Header Files\GameClasses">
       <UniqueIdentifier>{7b968ba4-d5c9-4984-b11e-6bef1ffe445e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Event">
+      <UniqueIdentifier>{ee73c987-ab43-4a9d-a8c1-bad531672676}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Event">
+      <UniqueIdentifier>{be7e7b23-0dcc-4574-b5c9-8c73becea13d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FastDelegate">
+      <UniqueIdentifier>{c8324254-7546-44f9-a4c2-52a477cf6dba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FastDelegate">
+      <UniqueIdentifier>{044b012f-9c93-4765-819e-24ebeda90897}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{1e3d3354-2bef-494a-84c0-b8b247b9211a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{8b8299dc-0c76-4d5e-b98e-59aeae76ad40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scripting">
+      <UniqueIdentifier>{ba8ec0d0-f419-4f33-9bfe-e7478d62e07e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scripting">
+      <UniqueIdentifier>{21e8b90f-f973-4f46-b361-f13514d73bcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EMath.hpp">
@@ -96,6 +120,42 @@
     <ClInclude Include="GameClasses\Ship.hpp">
       <Filter>Header Files\GameClasses</Filter>
     </ClInclude>
+    <ClInclude Include="Event\Event.h">
+      <Filter>Header Files\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Event\EventManager.h">
+      <Filter>Header Files\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="FastDelegate\FastDelegateBind.h">
+      <Filter>Header Files\FastDelegate</Filter>
+    </ClInclude>
+    <ClInclude Include="FastDelegate\FastDelegate.h">
+      <Filter>Header Files\FastDelegate</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Logging.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ActiveScript.h">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\LuaManager.h">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ScriptManager.h">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Bitmap.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Font.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\FontShader.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\IRenderable.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine.cpp">
@@ -137,5 +197,82 @@
     <ClCompile Include="Graphics\RenderObject.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Event\EventManager.cpp">
+      <Filter>Source Files\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Event\Event.cpp">
+      <Filter>Source Files\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Logging.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ActiveScript.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\LuaManager.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ScriptManager.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Bitmap.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Font.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\FontShader.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="programdata\avatar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\avatar.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\color.ps">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\color.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\luaplus51-1201.dll">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\seafloor.dds">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\space_frigate_6.modelobj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\space_frigate_6_color.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\test.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\texture.ps">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\texture.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\required.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\font.dds">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\font.ps">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\font.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="programdata\fontdata.txt">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

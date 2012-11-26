@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "Data\ModelData.h"
 #include "Data\VertexData.h"

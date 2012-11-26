@@ -2,13 +2,14 @@
 #define _ENGINE_H_
 
 
-
 #include <Windows.h>
-#include "Input\InputSystem.h"
-#include "Graphics\GraphicsSystem.h"
-#include "foundation.hpp"
-#include "Graphics\Model.h"
-#include "ResourceLoader.h"
+#include <Input\InputSystem.h>
+#include <Graphics\GraphicsSystem.h>
+#include <foundation.hpp>
+#include <Graphics\Model.h>
+#include <ResourceLoader.h>
+#include <Event\EventManager.h>
+#include <Scripting\ScriptManager.h>
 
 #include <time.h>
 
@@ -31,6 +32,7 @@ private:
 	bool Frame();
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
+	void RegisterScriptFunctions();
 
 private:
 	LPCWSTR m_applicationName;
@@ -40,6 +42,8 @@ private:
 	InputSystem* m_Input;
 	GraphicsSystem* m_Graphics;
 	ResourceLoader* m_ResourceLoader;
+	EventManager* m_EventManager;
+	ScriptManager* m_ScriptManager;
 
 	Ship m_Ship; //TEMPORARY
 	clock_t m_clock;

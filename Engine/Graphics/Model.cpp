@@ -50,7 +50,7 @@ void Model::Shutdown()
 	return;
 }
 
-void Model::Render(ID3D11DeviceContext* deviceContext)
+void Model::RenderToTarget(ID3D11DeviceContext* deviceContext)
 {
 	this->RenderBuffers(deviceContext);
 
