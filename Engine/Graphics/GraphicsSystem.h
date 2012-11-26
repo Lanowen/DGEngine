@@ -1,14 +1,14 @@
-#ifndef _GRAPHICSSYSTEM_H_
-#define _GRAPHICSSYSTEM_H_
+#pragma once
 
 #include <Windows.h>
 #include "D3DRenderer.h"
 #include "Camera.h"
 #include "TextureShader.h"
 #include "ColorShader.h"
-#include "../ResourceLoader.h"
-
+#include <ResourceLoader.h>
 #include "Model.h"
+#include "IRenderable.hpp"
+
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
@@ -28,30 +28,21 @@ public:
 	Model* LoadModel(std::string modelName, std::wstring texture);
 
 	void BeginScene();
-	//bool Render(Model* model);
-	bool Render(RenderObject* renderable);
+	void Render(IRenderable* renderable);
 	void EndScene();
 
-	Camera* GetCamera(){
-		return m_Camera;
-	}
+	Camera* GetCamera(){ return m_Camera; }
 
-private:
 
-	bool TextureShade(TexturedRenderObject* shadeObj);
-
-private:
 	D3DRenderer *m_D3D;
 	Camera *m_Camera;
 	TextureShader* m_TextureShader;
 	ColorShader* m_ColorShader;
 	ResourceLoader* m_ResourceLoader;
-	 
-	Mat44 m_viewMatrix, m_projectionMatrix, m_worldMatrix, m_orthoMatrix;
 
+private:
+	Mat44 m_viewMatrix, m_projectionMatrix, m_worldMatrix, m_orthoMatrix;
 
 public:
 	PROPERTY_GET(Camera* camera, GetCamera);
 };
-
-#endif

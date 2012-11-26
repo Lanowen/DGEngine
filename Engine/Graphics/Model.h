@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <iterator>
+#include <memory>
 
 #include "RenderObject.hpp"
 
@@ -18,7 +19,7 @@
 using namespace std;
 
 
-class Model : public TexturedRenderObject {
+class Model : public RenderObject<TexturePass> {
 private:
 	struct VertexType
 	{
@@ -35,7 +36,7 @@ public:
 	bool Initialize(ID3D11Device*, std::shared_ptr<ModelData>, WCHAR*);
 	void Shutdown();
 
-	virtual void Render(ID3D11DeviceContext* deviceContext);
+	virtual void RenderToTarget(ID3D11DeviceContext* deviceContext);
 
 	virtual int GetIndexCount();
 	virtual ID3D11ShaderResourceView* GetTexture();	
@@ -51,15 +52,12 @@ private:
 	bool LoadModel(std::shared_ptr<ModelData>);
 	void ReleaseModel();	
 
-	
-
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	int m_vertexCount, m_indexCount;
 
 	Texture* m_texture;
 	std::shared_ptr<ModelData> m_model;
-	
 };
 
 #endif

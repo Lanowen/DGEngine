@@ -1,9 +1,30 @@
 #include "engine.h"
 
+namespace LPCD
+{
+    inline bool    Match(TypeWrapper<std::string>, lua_State* L, int idx)
+        {  return lua_type(L, idx) == LUA_TSTRING;  }
+    inline bool    Match(TypeWrapper<std::string&>, lua_State* L, int idx)
+        {  return lua_type(L, idx) == LUA_TSTRING;  }
+    inline bool Match(TypeWrapper<const std::string&>, lua_State* L, int idx)
+        {  return lua_type(L, idx) == LUA_TSTRING;  }
+    inline std::string Get(TypeWrapper<std::string>, lua_State* L, int idx)
+        {  return static_cast<const char*>(lua_tostring(L, idx));  }
+    inline std::string Get(TypeWrapper<std::string&>, lua_State* L, int idx)
+        {  return static_cast<const char*>(lua_tostring(L, idx));  }
+    inline std::string Get(TypeWrapper<const std::string&>, lua_State* L, int idx)
+        {  return static_cast<const char*>(lua_tostring(L, idx));  }
+    inline void Push(lua_State* L, std::string& value)
+        {  lua_pushstring(L, value.c_str());  }
+    inline void Push(lua_State* L, const std::string& value)
+        {  lua_pushstring(L, value.c_str());  }
+}
+
 Engine::Engine(){
 	m_Input = 0;
 	m_Graphics = 0;
 	m_ResourceLoader = 0;
+	m_EventManager = 0;
 }
 
 Engine::Engine(const Engine& other){
@@ -51,6 +72,26 @@ bool Engine::Initialize(){
 		return false;
 	}
 
+	m_EventManager = new EventManager();
+	result = m_EventManager->Initialize();
+	if(!result){
+		return false;
+	}
+
+	//m_EventManager->AddEventListener("testEvent", fastdelegate::MakeDelegate(this, &Engine::onEvent));
+	//m_EventManager->TriggerEvent(new Event("testEvent"));
+
+	m_ScriptManager = new ScriptManager();
+	result = m_ScriptManager->Initialize();
+	if(!result){
+		return false;
+	}
+
+	RegisterScriptFunctions();
+	
+	m_ScriptManager->ExecuteScript("programdata/required.lua");
+	m_ScriptManager->ExecuteScript("programdata/test.lua");
+
 	m_Ship.Initialize(m_Graphics);
 
 	m_Graphics->camera->position = Vec3(0,0,-200);
@@ -60,6 +101,13 @@ bool Engine::Initialize(){
 	m_clock = clock();
 
 	return true;
+}
+
+void Engine::RegisterScriptFunctions(){
+	LuaManager::Get()->GetGlobals().RegisterDirect("print", &Logging::ScriptDebugMessage);
+	//LuaManager::Get()->GetGlobals().RegisterDirect("CreatePlayer", *this, &Engine::ScriptCreatePlayer);
+	//LuaManager::Get()->GetGlobals().RegisterDirect("MoveCamera", *this, &Engine::MoveTo);
+	//LuaManager::Get()->GetGlobals().RegisterDirect("GetCamera", *this, &Engine::GetCamera);
 }
 
 void Engine::Shutdown(){
@@ -132,7 +180,8 @@ bool Engine::Frame(){
 			m_Graphics->Render(*itr);
 		}*/
 
-		m_Graphics->Render(reinterpret_cast<RenderObject*>(&m_Ship));
+		//m_Ship.Render();
+		m_Graphics->Render(&m_Ship);
 
 
 		m_Graphics->EndScene();
