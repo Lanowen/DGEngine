@@ -58,6 +58,12 @@
     <Filter Include="Source Files\Scripting">
       <UniqueIdentifier>{21e8b90f-f973-4f46-b361-f13514d73bcd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Audio">
+      <UniqueIdentifier>{87a5f66d-ef3e-4bf4-872d-d24355a0dbb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Audio">
+      <UniqueIdentifier>{fc5d9288-8f1b-4725-8d09-4b7585831fa5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EMath.hpp">
@@ -156,6 +162,21 @@
     <ClInclude Include="Graphics\IRenderable.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Scripting\StaticScriptFunctions.h">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ScriptEvent.h">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ScriptEventListenerProxy.h">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\LPCDString.h">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\AudioSystem.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine.cpp">
@@ -223,6 +244,18 @@
     </ClCompile>
     <ClCompile Include="Graphics\FontShader.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\StaticScriptFunctions.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ScriptEvent.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ScriptEventListenerProxy.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\AudioSystem.cpp">
+      <Filter>Source Files\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

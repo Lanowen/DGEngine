@@ -27,10 +27,10 @@ public:
 		m_Vel = Vec3(0,0,0);
 		m_RotVel = Vec3(0,0,0);
 
-		if(keys[VK_DOWN]){
+		if(keys[VK_DOWN] && !keys[VK_SHIFT]){
 			m_Vel.y -= 10;
 		}
-		if(keys[VK_UP]){
+		if(keys[VK_UP] && !keys[VK_SHIFT]){
 			m_Vel.y += 10;
 		}
 		if(keys[VK_LEFT]){
@@ -38,6 +38,14 @@ public:
 		}
 		if(keys[VK_RIGHT]){
 			m_Vel.x += 10;
+		}
+
+
+		if(keys[VK_DOWN] && keys[VK_SHIFT]){
+			m_Vel.z -= 10;
+		}
+		if(keys[VK_UP] && keys[VK_SHIFT]){
+			m_Vel.z += 10;
 		}
 
 		if(keys['S']){

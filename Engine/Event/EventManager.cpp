@@ -1,5 +1,7 @@
 #include "EventManager.h"
 
+EventManager* EventManager::p_EventMgr = 0;
+
 bool EventManager::Initialize()
 {
 	return true;
@@ -7,7 +9,7 @@ bool EventManager::Initialize()
 
 bool EventManager::Update()
 {
-	Event* threadSafeEvent;
+	EventPtr threadSafeEvent;
 	while (this->m_threadSafeQueue.try_pop(threadSafeEvent))
 	{
 		this->QueueEvent(threadSafeEvent);
@@ -19,7 +21,7 @@ bool EventManager::Update()
 
 	while (!this->m_queues[queueToProcess].empty())
 	{
-		Event* event = this->m_queues[queueToProcess].front();
+		EventPtr event = this->m_queues[queueToProcess].front();
 		this->m_queues[queueToProcess].pop_front();
 
 		if (this->m_eventListeners.find(event->Name) != this->m_eventListeners.end())
@@ -39,7 +41,7 @@ bool EventManager::Update()
 	{
 		while (!this->m_queues[queueToProcess].empty())
 		{
-			Event* event = this->m_queues[queueToProcess].back();
+			EventPtr event = this->m_queues[queueToProcess].back();
 			this->m_queues[queueToProcess].pop_back();
 			this->m_queues[this->m_activeQueue].push_front(event);
 		}
@@ -84,7 +86,7 @@ void EventManager::RemoveEventListener(std::string type, const EventListenerDele
 	}
 }
 
-bool EventManager::TriggerEvent(Event* event)
+bool EventManager::TriggerEvent(EventPtr event)
 {
 	if (this->m_eventListeners.find(event->Name) == this->m_eventListeners.end())
 	{
@@ -101,7 +103,7 @@ bool EventManager::TriggerEvent(Event* event)
 	return true;
 }
 
-bool EventManager::QueueEvent(Event* event)
+bool EventManager::QueueEvent(EventPtr event)
 {
 	if (!event)
 	{
@@ -143,7 +145,7 @@ bool EventManager::AbortEvent(std::string type)
 	return true;
 }
 
-bool EventManager::ThreadSafeQueueEvent(Event* event)
+bool EventManager::ThreadSafeQueueEvent(EventPtr event)
 {
 	this->m_threadSafeQueue.push(event);
 	return true;
@@ -152,6 +154,7 @@ bool EventManager::ThreadSafeQueueEvent(Event* event)
 EventManager::EventManager()
 {
 	this->m_activeQueue = 0;
+	p_EventMgr = this;
 }
 
 EventManager::EventManager(const EventManager&)
@@ -160,4 +163,15 @@ EventManager::EventManager(const EventManager&)
 
 EventManager::~EventManager()
 {
+	p_EventMgr = 0;
+}
+
+EventManager* EventManager::Get(){
+
+	if(!p_EventMgr){
+		new EventManager();
+		p_EventMgr->Initialize();
+	}
+
+	return p_EventMgr;
 }

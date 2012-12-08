@@ -18,12 +18,16 @@ public:
 	void setPosition(Vec3 position){ m_position = position; };
 	void setRotation(Quat rotation){ m_rotation = rotation; };
 
+	Vec3 getForward() { Vec3 f(0,0,1); return m_rotation.rotate(f); };
+
 	virtual void update(Real deltaTime){};
 
 	//TODO:
 	//Make this better, would rather just have position and rotation public.
 	PROPERTY_GET_SET(Vec3 position, getPosition, setPosition);
 	PROPERTY_GET_SET(Quat rotation, getRotation, setRotation);
+
+	PROPERTY_GET(Vec3 forward, getForward);
 };
 
 #endif

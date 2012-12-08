@@ -1,24 +1,5 @@
 #include "engine.h"
-
-namespace LPCD
-{
-    inline bool    Match(TypeWrapper<std::string>, lua_State* L, int idx)
-        {  return lua_type(L, idx) == LUA_TSTRING;  }
-    inline bool    Match(TypeWrapper<std::string&>, lua_State* L, int idx)
-        {  return lua_type(L, idx) == LUA_TSTRING;  }
-    inline bool Match(TypeWrapper<const std::string&>, lua_State* L, int idx)
-        {  return lua_type(L, idx) == LUA_TSTRING;  }
-    inline std::string Get(TypeWrapper<std::string>, lua_State* L, int idx)
-        {  return static_cast<const char*>(lua_tostring(L, idx));  }
-    inline std::string Get(TypeWrapper<std::string&>, lua_State* L, int idx)
-        {  return static_cast<const char*>(lua_tostring(L, idx));  }
-    inline std::string Get(TypeWrapper<const std::string&>, lua_State* L, int idx)
-        {  return static_cast<const char*>(lua_tostring(L, idx));  }
-    inline void Push(lua_State* L, std::string& value)
-        {  lua_pushstring(L, value.c_str());  }
-    inline void Push(lua_State* L, const std::string& value)
-        {  lua_pushstring(L, value.c_str());  }
-}
+#include "Scripting\ScriptEvent.h"
 
 Engine::Engine(){
 	m_Input = 0;
@@ -78,8 +59,11 @@ bool Engine::Initialize(){
 		return false;
 	}
 
-	//m_EventManager->AddEventListener("testEvent", fastdelegate::MakeDelegate(this, &Engine::onEvent));
-	//m_EventManager->TriggerEvent(new Event("testEvent"));
+	m_AudioSystem = new AudioSystem();
+	result = m_AudioSystem->Initialize();
+	if(!result){
+		return false;
+	}
 
 	m_ScriptManager = new ScriptManager();
 	result = m_ScriptManager->Initialize();
@@ -92,6 +76,11 @@ bool Engine::Initialize(){
 	m_ScriptManager->ExecuteScript("programdata/required.lua");
 	m_ScriptManager->ExecuteScript("programdata/test.lua");
 
+	//m_EventManager->AddEventListener("testEvent", fastdelegate::MakeDelegate(this, &Engine::onEvent));
+	std::shared_ptr<ScriptEvent> evt(new ScriptEvent);
+	evt->Name = "scriptEvent";
+	m_EventManager->TriggerEvent(evt);
+
 	m_Ship.Initialize(m_Graphics);
 
 	m_Graphics->camera->position = Vec3(0,0,-200);
@@ -100,11 +89,23 @@ bool Engine::Initialize(){
 
 	m_clock = clock();
 
+	m_AudioSystem->SetListener(m_Graphics->camera);
+
+	m_AudioSystem->Play3DSound("programdata/music.mp3", static_cast<GameObject*>(&m_Ship));
+
 	return true;
 }
 
+static void test(float b){
+	stringstream ss;
+	ss << b;
+
+	Logging::ScriptDebugMessage(ss.str());
+}
+
 void Engine::RegisterScriptFunctions(){
-	LuaManager::Get()->GetGlobals().RegisterDirect("print", &Logging::ScriptDebugMessage);
+	LuaManager::Get()->GetGlobals().RegisterDirect("test", &test);
+	//LuaManager::Get()->GetGlobals().RegisterDirect("print", &Logging::ScriptDebugMessage);
 	//LuaManager::Get()->GetGlobals().RegisterDirect("CreatePlayer", *this, &Engine::ScriptCreatePlayer);
 	//LuaManager::Get()->GetGlobals().RegisterDirect("MoveCamera", *this, &Engine::MoveTo);
 	//LuaManager::Get()->GetGlobals().RegisterDirect("GetCamera", *this, &Engine::GetCamera);
@@ -145,17 +146,24 @@ void Engine::Run(){
 			done = true;
 		}
 		else{
+			m_ScriptManager->BeforeUpdate();
+
 			m_Input->Update();
 			
 			clock_t temp = clock();
-			float deltaTime = (temp - m_clock)/(float)CLOCKS_PER_SEC;
+			double deltaTime = (temp - m_clock)/(double)CLOCKS_PER_SEC;
 			m_clock = temp;
+
+			m_AudioSystem->Update(m_clock);
 
 			if(deltaTime != 0){
 				m_Ship.update(deltaTime);
 			}
 
 			result = Frame();
+
+			m_ScriptManager->AfterUpdate();
+
 			if(!result){
 				done = true;
 			}
@@ -171,9 +179,7 @@ bool Engine::Frame(){
 	}
 
 	try{
-
 		m_Graphics->BeginScene();
-
 
 		/*std::vector<Model*>::iterator itr = m_Models.begin();
 		for(;itr != m_Models.end(); itr++){
@@ -182,7 +188,6 @@ bool Engine::Frame(){
 
 		//m_Ship.Render();
 		m_Graphics->Render(&m_Ship);
-
 
 		m_Graphics->EndScene();
 	}
@@ -193,8 +198,6 @@ bool Engine::Frame(){
 		return false;
 	}
 
-	
-	
 	return true;
 }
 

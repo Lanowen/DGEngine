@@ -10,6 +10,7 @@
 #include <ResourceLoader.h>
 #include <Event\EventManager.h>
 #include <Scripting\ScriptManager.h>
+#include <Audio\AudioSystem.h>
 
 #include <time.h>
 
@@ -44,6 +45,7 @@ private:
 	ResourceLoader* m_ResourceLoader;
 	EventManager* m_EventManager;
 	ScriptManager* m_ScriptManager;
+	AudioSystem* m_AudioSystem;
 
 	Ship m_Ship; //TEMPORARY
 	clock_t m_clock;

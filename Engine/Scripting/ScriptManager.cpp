@@ -1,4 +1,5 @@
 #include "ScriptManager.h"
+#include "StaticScriptFunctions.h"
 
 void ScriptManager::BeforeUpdate(){
 	for(int i = 0, size=this->p_activeScripts.size(); i < size; i++){
@@ -46,11 +47,9 @@ LuaPlus::LuaObject ScriptManager::CreateActiveScript(LuaPlus::LuaObject self, Lu
 
 void ScriptManager::RemoveCompletedScripts(){
 	int i = 0, size=this->p_activeScripts.size();
-	for(;i < size; i++)
-	{
+	for(;i < size; i++){
 		ActiveScript* script = this->p_activeScripts[i];
-		if (script->IsComplete())
-		{
+		if (script->IsComplete()){
 			this->p_activeScripts.erase(this->p_activeScripts.begin() + i);
 			i--;
 			size--;
@@ -80,8 +79,8 @@ void ScriptManager::InitFunctionality(){
 
 	this->m_lua->GetGlobals().RegisterDirect("print", (*this), &ScriptManager::Trace);
 
-	//StaticScriptFunction::RegisterFunction(this->m_lua->GetGlobals());
-	//StaticScriptFunction::RegisterTypes()
+	StaticScriptFunctions::RegisterFunctions(this->m_lua->GetGlobals());
+	StaticScriptFunctions::RegisterTypes();
 }
 
 void ScriptManager::Shutdown(){
@@ -104,7 +103,7 @@ void ScriptManager::ThrowError(int errorNum){
 }
 
 void ScriptManager::Trace(const char* message){
-
+	Logging::ScriptDebugMessage(message);
 }
 
 ScriptManager::ScriptManager(){
