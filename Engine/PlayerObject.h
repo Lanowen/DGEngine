@@ -1,4 +1,7 @@
-#include "RenderObject.hpp"
+#pragma once
+
+#include <Graphics\RenderObject.hpp>
+#include <EMath.hpp>
 
 class PlayerObject : public RenderObject
 {
@@ -7,6 +10,6 @@ public:
 	PlayerObject(const PlayerObject&) {};
 	~PlayerObject() {};
 
-	virtual void update(Real deltaTime) {};
+	virtual void Update(Real deltaTime) {};
 	virtual void draw() {};
 };

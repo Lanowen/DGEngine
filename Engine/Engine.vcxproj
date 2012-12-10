@@ -21,7 +21,6 @@
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />
     <ClInclude Include="foundation.hpp" />
-    <ClInclude Include="GameClasses\Ship.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="Graphics\Bitmap.h" />
     <ClInclude Include="Graphics\Camera.h" />
@@ -32,10 +31,15 @@
     <ClInclude Include="Graphics\FontShader.h" />
     <ClInclude Include="Graphics\GraphicsSystem.h" />
     <ClInclude Include="Graphics\IRenderable.hpp" />
+    <ClInclude Include="Graphics\IShader.hpp" />
     <ClInclude Include="Graphics\Model.h" />
     <ClInclude Include="Graphics\RenderObject.hpp" />
+    <ClInclude Include="Graphics\SceneNode.hpp" />
+    <ClInclude Include="Graphics\Scene.hpp" />
+    <ClInclude Include="Graphics\Text.h" />
     <ClInclude Include="Graphics\Texture.h" />
     <ClInclude Include="Graphics\TextureShader.h" />
+    <ClInclude Include="Graphics\ViewPort.hpp" />
     <ClInclude Include="Input\IKeyboardHandler.h" />
     <ClInclude Include="Input\InputSystem.h" />
     <ClInclude Include="PlayerObject.h" />
@@ -63,8 +67,11 @@
     <ClCompile Include="Graphics\GraphicsSystem.cpp" />
     <ClCompile Include="Graphics\Model.cpp" />
     <ClCompile Include="Graphics\RenderObject.cpp" />
+    <ClCompile Include="Graphics\Scene.cpp" />
+    <ClCompile Include="Graphics\Text.cpp" />
     <ClCompile Include="Graphics\Texture.cpp" />
     <ClCompile Include="Graphics\TextureShader.cpp" />
+    <ClCompile Include="Graphics\ViewPort.cpp" />
     <ClCompile Include="Input\InputSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PlayerObject.cpp" />
@@ -78,22 +85,22 @@
     <ClCompile Include="Utils\Logging.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="programdata\avatar.bmp" />
-    <None Include="programdata\avatar.jpg" />
-    <None Include="programdata\color.ps" />
-    <None Include="programdata\color.vs" />
-    <None Include="programdata\font.dds" />
-    <None Include="programdata\font.ps" />
-    <None Include="programdata\font.vs" />
-    <None Include="programdata\fontdata.txt" />
-    <None Include="programdata\luaplus51-1201.dll" />
-    <None Include="programdata\required.lua" />
-    <None Include="programdata\seafloor.dds" />
-    <None Include="programdata\space_frigate_6.modelobj" />
-    <None Include="programdata\space_frigate_6_color.jpg" />
-    <None Include="programdata\test.lua" />
-    <None Include="programdata\texture.ps" />
-    <None Include="programdata\texture.vs" />
+    <None Include="..\programdata\avatar.bmp" />
+    <None Include="..\programdata\avatar.jpg" />
+    <None Include="..\programdata\color.ps" />
+    <None Include="..\programdata\color.vs" />
+    <None Include="..\programdata\font.dds" />
+    <None Include="..\programdata\font.ps" />
+    <None Include="..\programdata\font.vs" />
+    <None Include="..\programdata\fontdata.txt" />
+    <None Include="..\programdata\music.mp3" />
+    <None Include="..\programdata\required.lua" />
+    <None Include="..\programdata\seafloor.dds" />
+    <None Include="..\programdata\space_frigate_6.modelobj" />
+    <None Include="..\programdata\space_frigate_6_color.jpg" />
+    <None Include="..\programdata\test.lua" />
+    <None Include="..\programdata\texture.ps" />
+    <None Include="..\programdata\texture.vs" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{577C82EC-335A-43FE-9FDF-CFA60454AF46}</ProjectGuid>
@@ -102,13 +109,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -134,7 +141,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(BOOST_1_49_0);$(ProjectDir);$(ProjectDir)LuaPlus\include;C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\inc;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(ProjectDir)lib;C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\lib;$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)\Build$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)\_build\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

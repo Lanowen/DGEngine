@@ -27,7 +27,7 @@ bool FontShader::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 
-	result = InitializeShader(device, hwnd, L"font.vs", L"font.ps");
+	result = InitializeShader(device, hwnd, L"programdata/font.vs", L"programdata/font.ps");
 	if(!result)
 	{
 		return false;

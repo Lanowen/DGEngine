@@ -15,9 +15,6 @@ public:
 	ScriptManager(const ScriptManager&);
 	~ScriptManager();
 
-	bool Initialize();
-	void Shutdown();
-
 	void BeforeUpdate();
 	void AfterUpdate();
 	void Success();

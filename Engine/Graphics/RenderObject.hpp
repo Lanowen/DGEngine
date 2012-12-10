@@ -2,29 +2,22 @@
 #define _RENDEROBJECT_HPP_
 
 #include "TextureShader.h"
+#include "FontShader.h"
 #include <GameObject.hpp>
 #include "Exceptions\RenderException.hpp"
-#include "D3DRenderer.h"
+//#include "ViewPort.h"
 #include "IRenderable.hpp"
+#include "IShader.hpp"
 
-template<class shader>
-class RenderObject : public IRenderable, public GameObject,	private shader {
+
+class RenderObject : public IRenderable, public GameObject {
 public:
-	RenderObject() {}
-	RenderObject(const RenderObject& other) {}
+	RenderObject(std::string name) : GameObject(name) {}
+	RenderObject(const RenderObject& other) : GameObject(other) {}
 	~RenderObject() {}
-
-	//virtual bool Render() { RenderToTarget(m_D3D->GetDeviceContext()); return true; }
-
-	virtual bool ShadeToTarget(ID3D11DeviceContext* deviceContext, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix) { return shader::Shade(this, deviceContext, worldMatrix, viewMatrix, projectionMatrix); }
-
-	void setRenderTarget(D3DRenderer* D3D) { m_D3D = D3D; }
-
-private:
-	D3DRenderer* m_D3D;
 };
 
-class TexturePass{
+class TexturePass : public IShader {
 public:
 	TexturePass() {};
 	TexturePass(const TexturePass& other) {};
@@ -35,17 +28,51 @@ public:
 	virtual int GetIndexCount() = 0;
 	virtual ID3D11ShaderResourceView* GetTexture() = 0;
 
-	bool Shade(RenderObject<TexturePass>* ro, ID3D11DeviceContext* deviceContext, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix){
-		D3DXMATRIX translation, rotation;
+	virtual void Shade(RenderObject* ro, ID3D11DeviceContext* deviceContext, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix){
+		Mat44 translation, rotation, scale;
 
 		D3DXMatrixTranslation(&translation, ro->position.x, ro->position.y, ro->position.z);
 		D3DXMatrixRotationQuaternion(&rotation, &ro->rotation);
+		D3DXMatrixScaling(&scale, ro->scale.x, ro->scale.y, ro->scale.z);
 
-		return m_TextureShader->Render(deviceContext, GetIndexCount(), worldMatrix*rotation*translation, viewMatrix, projectionMatrix, GetTexture());
+		if(!m_TextureShader->Render(deviceContext, GetIndexCount(), worldMatrix*rotation*translation*scale, viewMatrix, projectionMatrix, GetTexture())){
+			throw RenderException();
+		}
 	}
 
 private:
 	static TextureShader* m_TextureShader;
 };
+
+class FontPass : public IShader {
+public:
+	FontPass() {};
+	FontPass(const FontPass& other) {};
+	~FontPass() {};
+
+	static void Initialize(FontShader* fontShader) {m_FontShader = fontShader;}
+
+	virtual int GetIndexCount() = 0;
+	virtual ID3D11ShaderResourceView* GetTexture() = 0;
+
+	virtual void Shade(RenderObject* ro, ID3D11DeviceContext* deviceContext, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix){
+		Mat44 translation, scale;
+
+		D3DXMatrixTranslation(&translation, ro->position.x, ro->position.y, ro->position.z);
+		D3DXMatrixScaling(&scale, ro->scale.x, ro->scale.y, ro->scale.z);
+
+		if(!this->m_FontShader->Render(deviceContext, GetIndexCount(), worldMatrix*translation*scale, viewMatrix, projectionMatrix, GetTexture(), pixelColor)){
+			throw RenderException();
+		}
+	}
+
+protected:
+	D3DXVECTOR4 pixelColor;
+
+private:
+	static FontShader* m_FontShader;
+};
+
+
 
 #endif

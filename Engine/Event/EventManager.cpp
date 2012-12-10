@@ -2,11 +2,6 @@
 
 EventManager* EventManager::p_EventMgr = 0;
 
-bool EventManager::Initialize()
-{
-	return true;
-}
-
 bool EventManager::Update()
 {
 	EventPtr threadSafeEvent;
@@ -48,10 +43,6 @@ bool EventManager::Update()
 	}
 	
 	return queueFlushed;
-}
-
-void EventManager::Shutdown()
-{
 }
 
 void EventManager::AddEventListener(std::string type, const EventListenerDelegate func)
@@ -170,7 +161,6 @@ EventManager* EventManager::Get(){
 
 	if(!p_EventMgr){
 		new EventManager();
-		p_EventMgr->Initialize();
 	}
 
 	return p_EventMgr;

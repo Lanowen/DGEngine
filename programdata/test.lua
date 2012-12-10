@@ -18,7 +18,7 @@ end
 
 function TestEvent(eventData)
 	print("testing event");
-	test(0);
+	--test(0);
 end
 
 AddEventListener("scriptEvent", TestEvent);

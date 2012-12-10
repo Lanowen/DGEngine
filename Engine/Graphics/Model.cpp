@@ -1,60 +1,52 @@
 #include "Model.h"
+#include <sstream>
 
-Model::Model()
+Model::Model(ID3D11Device* device, std::shared_ptr<ModelData> modelData, WCHAR* textureFilename, std::string name) : RenderObject(name)
 {
 	this->m_vertexBuffer = 0;
 	this->m_indexBuffer = 0;
 	this->m_texture = 0;
 	this->m_model = 0;
-}
 
-Model::Model(const Model& other)
-{
-}
-
-Model::~Model()
-{
-}
-
-bool Model::Initialize(ID3D11Device* device, std::shared_ptr<ModelData> modelData, WCHAR* textureFilename)
-{
 	bool result;
 
 	result = LoadModel(modelData);
 	if (!result)
 	{
-		return false;
+		throw std::exception("Could not load modelData");
 	}
 
 	result = InitializeBuffers(device);
 	if (!result)
 	{
-		return false;
+		throw std::exception("Could not initialize Model Buffers");
 	}
 
 	result = LoadTexture(device, textureFilename);
 	if (!result)
 	{
-		return false;
+		std::stringstream ss;
+		ss << "Could not load Model Texture: " << textureFilename;
+		throw std::exception(ss.str().c_str());
 	}
-
-	return true;
 }
 
-void Model::Shutdown()
+Model::Model(const Model& other) : RenderObject(other)
+{
+	this->m_vertexBuffer = other.m_vertexBuffer;
+	this->m_indexBuffer = other.m_indexBuffer;
+	this->m_texture = other.m_texture;
+	this->m_model = other.m_model;
+	this->m_indexCount = other.m_indexCount;
+	this->m_vertexCount = other.m_vertexCount;
+}
+
+Model::~Model()
 {
 	ReleaseTexture();
 	ShutdownBuffers();
 	ReleaseModel();
 
-	return;
-}
-
-void Model::RenderToTarget(ID3D11DeviceContext* deviceContext)
-{
-	this->RenderBuffers(deviceContext);
-
-	return;
 }
 
 int Model::GetIndexCount()

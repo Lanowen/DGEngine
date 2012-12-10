@@ -27,15 +27,14 @@ public:
 
 private:
 	static EventManager* p_EventMgr;
-
-public:
 	EventManager();
 	EventManager(const EventManager&);
+
+public:
+	
 	~EventManager();
 
-	bool Initialize();
 	bool Update();
-	void Shutdown();
 
 	void AddEventListener(std::string, const EventListenerDelegate);
 	void RemoveEventListener(std::string, const EventListenerDelegate);

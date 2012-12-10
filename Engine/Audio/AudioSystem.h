@@ -9,18 +9,20 @@
 #include <GameObject.hpp>
 #include <Utils\Logging.h>
 #include <map>
+#include <EMath.hpp>
 
 struct Sound3DObject {
 public:
 	GameObject* source;
 	FMOD::Sound* sound;
 	FMOD::Channel* channel;
+	FMOD_VECTOR listenerLastPos;
 
 	Sound3DObject() : source(0), sound(0), channel(0) {}
 
-	Sound3DObject(GameObject* source, FMOD::Sound* sound, FMOD::Channel* channel): source(source), sound(sound), channel(channel) {}
+	Sound3DObject(GameObject* source, FMOD::Sound* sound, FMOD::Channel* channel, FMOD_VECTOR prevPos): source(source), sound(sound), channel(channel), listenerLastPos(prevPos) {}
 
-	Sound3DObject(const Sound3DObject& obj): source(obj.source), sound(obj.sound), channel(obj.channel) {}
+	Sound3DObject(const Sound3DObject& obj): source(obj.source), sound(obj.sound), channel(obj.channel), listenerLastPos(obj.listenerLastPos) {}
 };
 
 class AudioSystem{
@@ -33,9 +35,7 @@ public:
 	AudioSystem(const AudioSystem&);
 	~AudioSystem();
 
-	bool Initialize();
 	void Update(double);
-	void Shutdown();
 
 	void Play2DSound(std::string);
 	void Play3DSound(std::string, GameObject*);

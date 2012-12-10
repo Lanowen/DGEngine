@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "RenderObject.hpp"
+#include "ViewPort.hpp"
 
 #include "Texture.h"
 #include "..\Data\ModelData.h"
@@ -19,7 +20,7 @@
 using namespace std;
 
 
-class Model : public RenderObject<TexturePass> {
+class Model : private TexturePass, public RenderObject  {
 private:
 	struct VertexType
 	{
@@ -29,19 +30,21 @@ private:
 	};
 
 public:
-	Model();
+	Model(ID3D11Device* device, std::shared_ptr<ModelData> modelData, WCHAR* textureFilename, std::string name);
 	Model(const Model& model);
 	~Model();
 
-	bool Initialize(ID3D11Device*, std::shared_ptr<ModelData>, WCHAR*);
-	void Shutdown();
+	void Render(ViewPort* viewPort, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix){
+		RenderBuffers( viewPort->GetDeviceContext());
+		
+		Shade(this, viewPort->GetDeviceContext(), worldMatrix, viewMatrix, projectionMatrix);
+	}
 
-	virtual void RenderToTarget(ID3D11DeviceContext* deviceContext);
+private:	
 
 	virtual int GetIndexCount();
-	virtual ID3D11ShaderResourceView* GetTexture();	
+	virtual ID3D11ShaderResourceView* GetTexture();
 
-private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);

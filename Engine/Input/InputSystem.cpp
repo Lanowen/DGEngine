@@ -1,7 +1,13 @@
 #include "inputsystem.h"
 
 InputSystem::InputSystem(){
+	int i;
+	
+	for(i = 0; i < 256; i++){
+		m_keys[i] = false;
+	}
 
+	return;
 }
 
 InputSystem::InputSystem(const InputSystem& other){
@@ -10,16 +16,6 @@ InputSystem::InputSystem(const InputSystem& other){
 
 InputSystem::~InputSystem(){
 
-}
-
-void InputSystem::Initialize(){
-	int i;
-	
-	for(i = 0; i < 256; i++){
-		m_keys[i] = false;
-	}
-
-	return;
 }
 
 void InputSystem::Update(){

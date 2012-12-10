@@ -1,11 +1,13 @@
-#include "../Graphics/Model.h"
-#include "../Input/IKeyboardHandler.h"
-#include "../Graphics/GraphicsSystem.h"
+#include <Graphics/Model.h>
+#include <Input/IKeyboardHandler.h>
+#include <Graphics/GraphicsSystem.h>
 #include <functional>
+#include <EMath.hpp>
+#include <Graphics\GraphicsSystem.h>
 
 class Ship : public Model, public IKeyboardHandler  {
 public:
-	Ship() : m_Vel(Vec3(0,0,0)), m_RotVel(Vec3(0,0,0)) {
+	Ship(GraphicsSystem* graphics,std::string name) : m_Vel(Vec3(0,0,0)), m_RotVel(Vec3(0,0,0)), Model(*graphics->CreateModel("programdata/space_frigate_6.modelobj", L"programdata/space_frigate_6_color.jpg", name)) {
 
 	}
 
@@ -13,11 +15,7 @@ public:
 
 	}
 
-	void Initialize(GraphicsSystem* graphics){
-		graphics->LoadModel(this,"programdata/space_frigate_6.modelobj", L"programdata/space_frigate_6_color.jpg");
-	}
-
-	virtual void update(Real deltaTime){
+	virtual void Update(Real deltaTime){
 		m_position += m_Vel*deltaTime*10;
 		m_rotation *= Quat::fromYawPitchRoll(m_RotVel.x*deltaTime,m_RotVel.y*deltaTime,0);
 	}

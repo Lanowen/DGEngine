@@ -1,4 +1,6 @@
 #include "ResourceLoader.h"
+#include <sstream>
+#include <errno.h>
 
 //GLOBALS
 vector<string> &split(const string &s, char delim, vector<string> &elems) {
@@ -27,21 +29,18 @@ ResourceLoader::~ResourceLoader()
 {
 }
 
-bool ResourceLoader::Initialize()
-{
-	return true;
-}
-
-bool ResourceLoader::Shutdown()
-{
-	return true;
-}
-
 std::shared_ptr<ModelData> ResourceLoader::LoadModelData(char* filename)
 {
 	if (this->m_ModelData.find(filename) == this->m_ModelData.end())
 	{
+
 		std::ifstream infile(filename);
+
+		if(infile.fail() || infile.bad()){
+			std::stringstream ss;
+			ss << "Could not open file (" << filename << ") for reading. Reason: " << strerror(errno);
+			throw std::exception(ss.str().c_str());
+		}
 	
 		string line = "";
 

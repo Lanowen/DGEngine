@@ -3,9 +3,9 @@
 
 
 #include <Windows.h>
+#include <foundation.hpp>
 #include <Input\InputSystem.h>
 #include <Graphics\GraphicsSystem.h>
-#include <foundation.hpp>
 #include <Graphics\Model.h>
 #include <ResourceLoader.h>
 #include <Event\EventManager.h>
@@ -13,9 +13,6 @@
 #include <Audio\AudioSystem.h>
 
 #include <time.h>
-
-
-#include "GameClasses\Ship.hpp"
 
 class Engine {
 public:
@@ -40,19 +37,44 @@ private:
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
 
+	int m_screenWidth, m_screenHeight;
+
 	InputSystem* m_Input;
 	GraphicsSystem* m_Graphics;
 	ResourceLoader* m_ResourceLoader;
 	EventManager* m_EventManager;
 	ScriptManager* m_ScriptManager;
 	AudioSystem* m_AudioSystem;
-
-	Ship m_Ship; //TEMPORARY
 	clock_t m_clock;
+
+public:
+	PROPERTY_GET(HWND hwnd, getHWND);
+	PROPERTY_GET(InputSystem* inputSystem, getInputSystem);
+	PROPERTY_GET(GraphicsSystem* graphicsSystem, getGraphicsSystem);
+	PROPERTY_GET(ResourceLoader* resourceLoader, getResourceLoader);
+	PROPERTY_GET(EventManager* eventManager, getEventManager);
+	PROPERTY_GET(ScriptManager* scriptManager, getScriptManager);
+	PROPERTY_GET(AudioSystem* audioSystem, getAudioSystem);
+	PROPERTY_GET(int windowWidth, getWidth);
+	PROPERTY_GET(int windowHeight, getHeight);
+
+	InputSystem* getInputSystem(){ return m_Input;}
+	GraphicsSystem* getGraphicsSystem(){ return m_Graphics;}
+	ResourceLoader* getResourceLoader(){ return m_ResourceLoader;}
+	EventManager* getEventManager(){ return m_EventManager;}
+	ScriptManager* getScriptManager(){ return m_ScriptManager;}
+	AudioSystem* getAudioSystem(){ return m_AudioSystem;}
+
+	HWND getHWND(){return m_hwnd;}
+
+	int getWidth(){return m_screenWidth;}
+	int getHeight(){return m_screenHeight;}
+
+	static Engine* g_Engine;
 };
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-static Engine* ApplicationHandle = 0;
+extern Engine* ApplicationHandle;
 
 #endif

@@ -31,9 +31,6 @@
     <Filter Include="Header Files\Graphics\Exceptions">
       <UniqueIdentifier>{51df905d-d49b-4d2e-ae0e-85888c14253d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\GameClasses">
-      <UniqueIdentifier>{7b968ba4-d5c9-4984-b11e-6bef1ffe445e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Event">
       <UniqueIdentifier>{ee73c987-ab43-4a9d-a8c1-bad531672676}</UniqueIdentifier>
     </Filter>
@@ -123,9 +120,6 @@
     <ClInclude Include="Graphics\Exceptions\RenderException.hpp">
       <Filter>Header Files\Graphics\Exceptions</Filter>
     </ClInclude>
-    <ClInclude Include="GameClasses\Ship.hpp">
-      <Filter>Header Files\GameClasses</Filter>
-    </ClInclude>
     <ClInclude Include="Event\Event.h">
       <Filter>Header Files\Event</Filter>
     </ClInclude>
@@ -176,6 +170,21 @@
     </ClInclude>
     <ClInclude Include="Audio\AudioSystem.h">
       <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Scene.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\SceneNode.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\IShader.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\ViewPort.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Text.h">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -257,54 +266,63 @@
     <ClCompile Include="Audio\AudioSystem.cpp">
       <Filter>Source Files\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\Scene.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Text.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\ViewPort.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="programdata\avatar.bmp">
+    <None Include="..\programdata\avatar.bmp">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\avatar.jpg">
+    <None Include="..\programdata\avatar.jpg">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\color.ps">
+    <None Include="..\programdata\color.ps">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\color.vs">
+    <None Include="..\programdata\color.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\luaplus51-1201.dll">
+    <None Include="..\programdata\font.dds">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\seafloor.dds">
+    <None Include="..\programdata\font.ps">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\space_frigate_6.modelobj">
+    <None Include="..\programdata\font.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\space_frigate_6_color.jpg">
+    <None Include="..\programdata\fontdata.txt">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\test.lua">
+    <None Include="..\programdata\music.mp3">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\texture.ps">
+    <None Include="..\programdata\required.lua">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\texture.vs">
+    <None Include="..\programdata\seafloor.dds">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\required.lua">
+    <None Include="..\programdata\space_frigate_6.modelobj">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\font.dds">
+    <None Include="..\programdata\space_frigate_6_color.jpg">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\font.ps">
+    <None Include="..\programdata\test.lua">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\font.vs">
+    <None Include="..\programdata\texture.ps">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="programdata\fontdata.txt">
+    <None Include="..\programdata\texture.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

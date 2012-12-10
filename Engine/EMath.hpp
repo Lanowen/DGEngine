@@ -4,6 +4,7 @@
 #include "foundation.hpp"
 
 #ifdef D3DX10
+#include <d3d10_1.h>
 #include <D3DX10math.h>
 
 //TODO
@@ -97,6 +98,10 @@ struct Mat44 : public D3DXMATRIX {
 
 	//TODO
 	//Add other functions
+
+	FORCE_INLINE Mat44 operator*(const Mat44& other){
+		return *reinterpret_cast<Mat44*>(&(D3DXMATRIX::operator*(other)));
+	}
 };
 
 #endif

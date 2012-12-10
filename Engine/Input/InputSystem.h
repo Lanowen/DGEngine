@@ -10,7 +10,6 @@ public:
 	InputSystem(const InputSystem&);
 	~InputSystem();
 
-	void Initialize();
 	void Update();
 
 	void KeyDown(unsigned int);

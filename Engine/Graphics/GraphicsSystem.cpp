@@ -1,112 +1,75 @@
 #include "graphicssystem.h"
 
-GraphicsSystem::GraphicsSystem(){
+GraphicsSystem::GraphicsSystem(HWND hwnd, ResourceLoader* loader){
 	m_D3D = new D3DRenderer();
-	m_Camera = new Camera();
+	//m_Camera = new Camera();
 	m_TextureShader = new TextureShader();
-	m_ColorShader = new ColorShader;
-}
-
-GraphicsSystem::GraphicsSystem(const GraphicsSystem& other){
-}
-
-GraphicsSystem::~GraphicsSystem(){
-	delete m_D3D;
-	delete m_Camera;
-	delete m_TextureShader;
-}
-
-bool GraphicsSystem::Initialize(int screenWidth, int screenHeight, HWND hwnd, ResourceLoader* loader){
+	m_ColorShader = new ColorShader();
+	m_FontShader = new FontShader();
 
 	this->m_ResourceLoader = loader;
 
-
-	if(!m_D3D || !m_D3D->Initialize(screenWidth, screenHeight, false, hwnd, false, 1000.0f, 0.1f)){
-		return false;
-	}
-
-	if(!m_Camera){
-		return false;
-	}
-
 	if(!m_TextureShader || !m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd)){
-		MessageBox(hwnd, L"Could not initialize the texture shader.", L"Error", MB_OK);
-		return false;
+		throw std::exception("Could not initialize the texture shader.");
 	}
 	TexturePass::Initialize(m_TextureShader);
 
 	if(!m_ColorShader || !m_ColorShader->Initialize(this->m_D3D->GetDevice(), hwnd)){
-		MessageBox(hwnd, L"Could not initialize the color shader.", L"Error", MB_OK);
-		return false;
+		throw std::exception("Could not initialize the color shader.");
 	}
+	//TODO: Create colorPass shader type thing later sometime
 
-	return true;
+	if(!m_FontShader || !m_FontShader->Initialize(this->m_D3D->GetDevice(), hwnd)){
+		throw std::exception("Could not initialize the font shader.");
+	}
+	FontPass::Initialize(m_FontShader);
 }
 
-void GraphicsSystem::Shutdown(){
+GraphicsSystem::GraphicsSystem(const GraphicsSystem& other){
+	m_D3D = other.m_D3D;
 
-	m_D3D->Shutdown();
+	m_TextureShader = other.m_TextureShader;
+	m_ColorShader = other.m_ColorShader;
 
-	m_TextureShader->Shutdown();
-	m_ColorShader->Shutdown();
-
-	return;
+	this->m_ResourceLoader = other.m_ResourceLoader;
 }
 
-Model* GraphicsSystem::LoadModel(std::string modelName, std::wstring texture){
-	Model* model = new Model;
-	if (!model)
-	{
-		return NULL;
+GraphicsSystem::~GraphicsSystem(){
+	if(m_D3D){
+		delete m_D3D;
 	}
 
-	bool result = model->Initialize(this->m_D3D->GetDevice(), this->m_ResourceLoader->LoadModelData(&modelName[0]), &texture[0]);
-	if (!result)
-	{
-		//MessageBox(this->m_hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		delete model;
-		return NULL;
+	if(m_TextureShader){
+		m_TextureShader->Shutdown();
+		delete m_TextureShader;
 	}
+
+	
+	if(m_ColorShader){
+		m_ColorShader->Shutdown();
+		delete m_ColorShader;
+	}
+}
+
+ViewPort* GraphicsSystem::CreateViewport(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear){
+	return m_D3D->CreateViewport(screenWidth, screenHeight, vsync, hwnd, fullscreen, screenDepth, screenNear);
+}
+
+Text* GraphicsSystem::CreateText(std::string str, std::string name){
+	Text* text = new Text(m_D3D->GetDevice(), m_D3D->GetDeviceContext(), str, name);	
+
+	return text;
+}
+
+Bitmap* GraphicsSystem::CreateBitmap(std::wstring textureFilename, std::string name){
+	Bitmap* bitmap = new Bitmap( this->m_D3D->GetDevice(), &textureFilename[0], name);
+
+	return bitmap;
+}
+
+Model* GraphicsSystem::CreateModel(std::string modelName, std::wstring texture, std::string name){
+	Model* model = new Model(this->m_D3D->GetDevice(), this->m_ResourceLoader->LoadModelData(&modelName[0]), &texture[0], name);
 
 	return model;
-}
-
-Model* GraphicsSystem::LoadModel(Model* model, std::string modelName, std::wstring texture){
-	bool result = model->Initialize(this->m_D3D->GetDevice(), this->m_ResourceLoader->LoadModelData(&modelName[0]), &texture[0]);
-	if (!result)
-	{
-		//MessageBox(this->m_hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		delete model;
-		return NULL;
-	}
-
-	model->setRenderTarget(m_D3D);
-
-	return model;
-}
-
-void GraphicsSystem::BeginScene(){
-	// Clear the buffers to begin the scene.
-	this->m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
-
-	this->m_Camera->Render();
-
-	this->m_Camera->GetViewMatrix(m_viewMatrix);
-	this->m_D3D->GetWorldMatrix(m_worldMatrix);
-	this->m_D3D->GetProjectionMatrix(m_projectionMatrix);
-	this->m_D3D->GetOrthoMatrix(m_orthoMatrix);
-}
-
-void GraphicsSystem::Render(IRenderable* obj){
-	obj->RenderToTarget(this->m_D3D->GetDeviceContext());
-	bool result = obj->ShadeToTarget(this->m_D3D->GetDeviceContext(), m_worldMatrix, m_viewMatrix, m_projectionMatrix);
-
-	//if (!result){
-	//	throw RenderException();
-	//}
-}
-
-void GraphicsSystem::EndScene(){
-	this->m_D3D->EndScene();
 }
 

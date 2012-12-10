@@ -22,7 +22,7 @@ void AudioSystem::Play3DSound(std::string filename, GameObject* gameObject)
 	result = channel->set3DAttributes(&pos, 0);
 	channel->setChannelGroup(this->m_masterGroup);
 
-	m_sound3DObjects[filename] = Sound3DObject(gameObject, sound, channel);
+	m_sound3DObjects[filename] = Sound3DObject(gameObject, sound, channel, pos);
 }
 
 void AudioSystem::PlayMusic(std::string filename)
@@ -89,50 +89,74 @@ void AudioSystem::SetListener(GameObject* gameObject)
 	forward.x = gameObject->forward.x;
 	forward.y = gameObject->forward.y;
 	forward.z = gameObject->forward.z;
+
+	pos.x = gameObject->position.x;
+	pos.y = gameObject->position.y;
+	pos.z = gameObject->position.z;
+
+	this->m_listenerLastPos = pos;
 }
 
 void AudioSystem::Update(double time)
 {
+	if(m_listener){
+		FMOD_VECTOR pos;
+		FMOD_VECTOR vel;
+		FMOD_VECTOR forward;
+		FMOD_VECTOR up;
+		FMOD_RESULT result;
 
-	FMOD_VECTOR pos;
-	FMOD_VECTOR vel;
-	FMOD_VECTOR forward;
-	FMOD_VECTOR up;
-	FMOD_RESULT result;
+		up.x = 0; up.y = 1; up.z = 0;
 
-	up.x = 0; up.y = 1; up.z = 0;
+		forward.x = m_listener->forward.x;
+		forward.y = m_listener->forward.y;
+		forward.z = m_listener->forward.z;
 
-	forward.x = m_listener->forward.x;
-	forward.y = m_listener->forward.y;
-	forward.z = m_listener->forward.z;
+		pos.x = this->m_listener->position.x;
+		pos.y = this->m_listener->position.y;
+		pos.z = this->m_listener->position.z;
 
-	pos.x = this->m_listener->position.x;
-	pos.y = this->m_listener->position.y;
-	pos.z = this->m_listener->position.z;
+		vel.x = (pos.x - this->m_listenerLastPos.x)/time;
+		vel.y = (pos.y - this->m_listenerLastPos.y)/time;
+		vel.z = (pos.z - this->m_listenerLastPos.z)/time;
 
-	vel.x = (pos.x - this->m_listenerLastPos.x)/time;
-	vel.y = (pos.x - this->m_listenerLastPos.y)/time;
-	vel.z = (pos.x - this->m_listenerLastPos.z)/time;
+		result = this->m_fmod->set3DListenerAttributes(0, &pos, &vel, &forward, &up);
 
-	result = this->m_fmod->set3DListenerAttributes(0, &pos, &vel, &forward, &up);
+		this->m_fmod->update();
 
-	this->m_fmod->update();
+		this->m_listenerLastPos = pos;
 
-	this->m_listenerLastPos = pos;
+		for (Sound3DObjectMap::iterator itr = m_sound3DObjects.begin(); itr != m_sound3DObjects.end(); itr++){
+			Sound3DObject* obj = &(*itr).second;
 
-	for each(std::pair<std::string, Sound3DObject> sound3dobj in m_sound3DObjects){
-		Sound3DObject obj = sound3dobj.second;
+			FMOD_VECTOR objPos;
 
-		pos.x = obj.source->position.x;
-		pos.y = obj.source->position.y;
-		pos.z = obj.source->position.z;
+			objPos.x = obj->source->position.x;
+			objPos.y = obj->source->position.y;
+			objPos.z = obj->source->position.z;
 
-		result = obj.channel->set3DAttributes(&pos, 0);
+			vel.x = (objPos.x - obj->listenerLastPos.x)/time;
+			vel.y = (objPos.y - obj->listenerLastPos.y)/time;
+			vel.z = (objPos.z - obj->listenerLastPos.z)/time;
+
+			obj->listenerLastPos = objPos;
+
+			result = obj->channel->set3DAttributes(&objPos, &vel);
+		}
 	}
 }
 
-bool AudioSystem::Initialize()
+void AudioSystem::CheckResult(FMOD_RESULT result)
 {
+	if (result != FMOD_OK)
+	{
+		Logging::ThrowError(L"Could not initialize FMOD.");
+	}
+}
+AudioSystem::AudioSystem()
+{
+	this->m_listener = 0;
+
 	FMOD_RESULT result;
 	unsigned int version;
 	int numDrivers;
@@ -147,7 +171,7 @@ bool AudioSystem::Initialize()
 
 	if (version < FMOD_VERSION)
 	{
-		return false;
+		throw std::exception ("Could not initialize FMOD");
 	}
 
 	result = this->m_fmod->getNumDrivers(&numDrivers);
@@ -207,27 +231,6 @@ bool AudioSystem::Initialize()
 	this->m_musicGroup->setVolume(this->m_musicVolume);
 
 	this->m_fmod->set3DSettings(1.0f, 1.0f, 0.5f);
-
-	return true;
-}
-
-void AudioSystem::CheckResult(FMOD_RESULT result)
-{
-	if (result != FMOD_OK)
-	{
-		Logging::ThrowError(L"Could not initialize FMOD.");
-	}
-}
-
-void AudioSystem::Shutdown()
-{
-	this->m_fmod->release();
-	this->m_listener = 0;
-}
-
-AudioSystem::AudioSystem()
-{
-	this->m_listener = 0;
 }
 
 AudioSystem::AudioSystem(const AudioSystem&)
@@ -236,4 +239,6 @@ AudioSystem::AudioSystem(const AudioSystem&)
 
 AudioSystem::~AudioSystem()
 {
+	this->m_fmod->release();
+	this->m_listener = 0;
 }

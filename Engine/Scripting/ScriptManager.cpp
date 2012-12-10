@@ -57,15 +57,6 @@ void ScriptManager::RemoveCompletedScripts(){
 	}
 }
 
-bool ScriptManager::Initialize(){
-	this->m_lua = LuaManager::Get();
-	this->InitFunctionality();
-	this->InitActiveScriptTable();
-	//this->ExecuteScript("programdata/required.lua");
-
-	return true;
-} 
-
 void ScriptManager::InitActiveScriptTable(){
 	LuaPlus::LuaObject metaTableObj = this->m_lua->GetGlobals().CreateTable("ActiveScript");
 	metaTableObj.SetObject("__index", metaTableObj);
@@ -81,12 +72,6 @@ void ScriptManager::InitFunctionality(){
 
 	StaticScriptFunctions::RegisterFunctions(this->m_lua->GetGlobals());
 	StaticScriptFunctions::RegisterTypes();
-}
-
-void ScriptManager::Shutdown(){
-	this->m_lua->Shutdown();
-	delete this->m_lua;
-	this->m_lua = 0;
 }
 
 void ScriptManager::ExecuteScript(const char* filename){
@@ -107,7 +92,10 @@ void ScriptManager::Trace(const char* message){
 }
 
 ScriptManager::ScriptManager(){
-
+	this->m_lua = LuaManager::Get();
+	this->InitFunctionality();
+	this->InitActiveScriptTable();
+	//this->ExecuteScript("programdata/required.lua");
 }
 
 ScriptManager::ScriptManager(const ScriptManager&){
@@ -115,5 +103,7 @@ ScriptManager::ScriptManager(const ScriptManager&){
 }
 
 ScriptManager::~ScriptManager(){
-
+	this->m_lua->Shutdown();
+	delete this->m_lua;
+	this->m_lua = 0;
 }

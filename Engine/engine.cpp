@@ -1,11 +1,16 @@
 #include "engine.h"
-#include "Scripting\ScriptEvent.h"
+
+extern void DGEngineUpdate(Real deltaTime);
+extern void DGEngineRender();
+extern void DGEngineInit();
+extern void DGEngineShutDown();
 
 Engine::Engine(){
 	m_Input = 0;
 	m_Graphics = 0;
 	m_ResourceLoader = 0;
 	m_EventManager = 0;
+	ApplicationHandle = 0;
 }
 
 Engine::Engine(const Engine& other){
@@ -17,103 +22,70 @@ Engine::~Engine(){
 }
 
 bool Engine::Initialize(){
-	int screenWidth, screenHeight;
 
-	bool result;
+	m_screenWidth = 0;
+	m_screenHeight = 0;
+	try {
 
-	screenWidth = 0;
-	screenHeight = 0;
+		InitializeWindows(m_screenWidth, m_screenHeight);
 
-	InitializeWindows(screenWidth, screenHeight);
+		//Use RAII for as much as possible
 
-	m_Input = new InputSystem;
-	if(!m_Input){
-		return false;
-	}
+		m_Input = new InputSystem;
+		if(!m_Input){
+			return false;
+		}
 
-	m_Input->Initialize();
+		m_ResourceLoader = new ResourceLoader();
+		if(!m_ResourceLoader){
+			return false;
+		}
 
-	m_ResourceLoader = new ResourceLoader();
-	if(!m_ResourceLoader){
-		return false;
-	}
+		m_Graphics = new GraphicsSystem(m_hwnd, m_ResourceLoader);
+		if(!m_Graphics){
+			return false;
+		}
 
-	result = m_ResourceLoader->Initialize();
-	if(!result){
-		return false;
-	}
+		m_EventManager = EventManager::Get();
+		if(!m_EventManager){
+			return false;
+		}
 
-	m_Graphics = new GraphicsSystem;
-	if(!m_Graphics){
-		return false;
-	}
+		m_AudioSystem = new AudioSystem();
+		if(!m_AudioSystem){
+			return false;
+		}
 
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, m_ResourceLoader);
-	if(!result){
-		return false;
-	}
+		m_ScriptManager = new ScriptManager();
+		if(!m_ScriptManager){
+			return false;
+		}
 
-	m_EventManager = new EventManager();
-	result = m_EventManager->Initialize();
-	if(!result){
-		return false;
-	}
-
-	m_AudioSystem = new AudioSystem();
-	result = m_AudioSystem->Initialize();
-	if(!result){
-		return false;
-	}
-
-	m_ScriptManager = new ScriptManager();
-	result = m_ScriptManager->Initialize();
-	if(!result){
-		return false;
-	}
-
-	RegisterScriptFunctions();
+		RegisterScriptFunctions();
 	
-	m_ScriptManager->ExecuteScript("programdata/required.lua");
-	m_ScriptManager->ExecuteScript("programdata/test.lua");
+		m_ScriptManager->ExecuteScript("programdata/required.lua");
 
-	//m_EventManager->AddEventListener("testEvent", fastdelegate::MakeDelegate(this, &Engine::onEvent));
-	std::shared_ptr<ScriptEvent> evt(new ScriptEvent);
-	evt->Name = "scriptEvent";
-	m_EventManager->TriggerEvent(evt);
+		m_clock = clock();
 
-	m_Ship.Initialize(m_Graphics);
+		DGEngineInit();
 
-	m_Graphics->camera->position = Vec3(0,0,-200);
+		return true;
+	}
+	catch(std::exception exc){
+		MessageBoxA(m_hwnd, exc.what(), "Error", MB_OK);
+	}
 
-	m_Input->RegisterKeyboardHandler(&m_Ship);
-
-	m_clock = clock();
-
-	m_AudioSystem->SetListener(m_Graphics->camera);
-
-	m_AudioSystem->Play3DSound("programdata/music.mp3", static_cast<GameObject*>(&m_Ship));
-
-	return true;
-}
-
-static void test(float b){
-	stringstream ss;
-	ss << b;
-
-	Logging::ScriptDebugMessage(ss.str());
+	return false;
 }
 
 void Engine::RegisterScriptFunctions(){
-	LuaManager::Get()->GetGlobals().RegisterDirect("test", &test);
-	//LuaManager::Get()->GetGlobals().RegisterDirect("print", &Logging::ScriptDebugMessage);
-	//LuaManager::Get()->GetGlobals().RegisterDirect("CreatePlayer", *this, &Engine::ScriptCreatePlayer);
-	//LuaManager::Get()->GetGlobals().RegisterDirect("MoveCamera", *this, &Engine::MoveTo);
-	//LuaManager::Get()->GetGlobals().RegisterDirect("GetCamera", *this, &Engine::GetCamera);
+	//LuaManager::Get()->GetGlobals().RegisterDirect("findGameObjectByName", &);
 }
 
 void Engine::Shutdown(){
+	DGEngineShutDown();
+
 	if(m_Graphics){
-		m_Graphics->Shutdown();
 		delete m_Graphics;
 		m_Graphics = 0;
 	}
@@ -146,23 +118,28 @@ void Engine::Run(){
 			done = true;
 		}
 		else{
-			m_ScriptManager->BeforeUpdate();
-
-			m_Input->Update();
+			
 			
 			clock_t temp = clock();
 			double deltaTime = (temp - m_clock)/(double)CLOCKS_PER_SEC;
 			m_clock = temp;
 
-			m_AudioSystem->Update(m_clock);
-
 			if(deltaTime != 0){
-				m_Ship.update(deltaTime);
+
+				m_ScriptManager->BeforeUpdate();
+				m_Input->Update();
+				m_AudioSystem->Update(deltaTime);
+			
+				//m_scene->Update(deltaTime);
+				DGEngineUpdate(deltaTime);
+			
+				
+				m_ScriptManager->AfterUpdate();
+
+				
 			}
 
 			result = Frame();
-
-			m_ScriptManager->AfterUpdate();
 
 			if(!result){
 				done = true;
@@ -173,23 +150,15 @@ void Engine::Run(){
 	return;
 }
 
+
 bool Engine::Frame(){
 	if(m_Input->IsKeyDown(VK_ESCAPE)){
 		return false;
 	}
 
 	try{
-		m_Graphics->BeginScene();
-
-		/*std::vector<Model*>::iterator itr = m_Models.begin();
-		for(;itr != m_Models.end(); itr++){
-			m_Graphics->Render(*itr);
-		}*/
-
-		//m_Ship.Render();
-		m_Graphics->Render(&m_Ship);
-
-		m_Graphics->EndScene();
+		DGEngineRender();
+		//m_viewPort->Render();
 	}
 	catch(std::exception& e){
 

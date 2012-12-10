@@ -1,30 +1,13 @@
 #include "Bitmap.h"
+#include <sstream>
 
-Bitmap::Bitmap()
+Bitmap::Bitmap(ID3D11Device* device, WCHAR* textureFilename, std::string name) : RenderObject(name)
 {
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
 	m_Texture = 0;
-}
 
-
-Bitmap::Bitmap(const Bitmap& other)
-{
-}
-
-
-Bitmap::~Bitmap()
-{
-}
-
-bool Bitmap::Initialize(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* textureFilename)
-{
 	bool result;
-
-	m_screenWidth = screenWidth;
-	m_screenHeight = screenHeight;
-
-	
 
 	m_previousPosX = -1;
 	m_previousPosY = -1;
@@ -32,13 +15,15 @@ bool Bitmap::Initialize(ID3D11Device* device, int screenWidth, int screenHeight,
 	result = InitializeBuffers(device);
 	if(!result)
 	{
-		return false;
+		throw std::exception("Could not initialize Bitmap Buffers");
 	}
 
 	result = LoadTexture(device, textureFilename);
 	if(!result)
 	{
-		return false;
+		std::stringstream ss;
+		ss << "Could not Load Bitmap Texture: " << textureFilename;
+		throw std::exception(ss.str().c_str());
 	}
 	
 	ID3D11Texture2D* res;
@@ -51,62 +36,28 @@ bool Bitmap::Initialize(ID3D11Device* device, int screenWidth, int screenHeight,
 
 	m_bitmapWidth = desc.Width;
 	m_bitmapHeight = desc.Height;
-
-	return true;
 }
 
 
-bool Bitmap::Initialize(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* textureFilename, int bitmapWidth, int bitmapHeight)
+Bitmap::Bitmap(const Bitmap& other) : RenderObject(other)
 {
-	bool result;
-
-	m_screenWidth = screenWidth;
-	m_screenHeight = screenHeight;
-
-	m_bitmapWidth = bitmapWidth;
-	m_bitmapHeight = bitmapHeight;
-
-	m_previousPosX = -1;
-	m_previousPosY = -1;
-
-	result = InitializeBuffers(device);
-	if(!result)
-	{
-		return false;
-	}
-
-	result = LoadTexture(device, textureFilename);
-	if(!result)
-	{
-		return false;
-	}
-
-	return true;
+	m_vertexBuffer = other.m_vertexBuffer;
+	m_indexBuffer = other.m_indexBuffer;
+	m_vertexCount = other.m_vertexCount;
+	m_indexCount = other.m_indexCount;
+	m_Texture = other.m_Texture;
+	m_bitmapWidth = other.m_bitmapWidth;
+	m_bitmapHeight = other.m_bitmapHeight;
+	m_previousPosX = other.m_previousPosX;
+	m_previousPosY = other.m_previousPosY;
 }
 
-void Bitmap::Shutdown()
+
+Bitmap::~Bitmap()
 {
 	ReleaseTexture();
 
 	ShutdownBuffers();
-
-	return;
-}
-
-bool Bitmap::Render(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
-{
-	bool result;
-
-
-	result = UpdateBuffers(deviceContext, positionX, positionY);
-	if(!result)
-	{
-		return false;
-	}
-
-	RenderBuffers(deviceContext);
-
-	return true;
 }
 
 int Bitmap::GetIndexCount()
@@ -211,27 +162,27 @@ void Bitmap::ShutdownBuffers()
 	return;
 }
 
-bool Bitmap::UpdateBuffers(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
+bool Bitmap::UpdateBuffers(ID3D11DeviceContext* deviceContext)
 {
+	if((position.x == m_previousPosX) && (position.y == m_previousPosY))
+	{
+		return true;
+	}
+
 	float left, right, top, bottom;
 	VertexType* vertices;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	VertexType* verticesPtr;
 	HRESULT result;
 
-	if((positionX == m_previousPosX) && (positionY == m_previousPosY))
-	{
-		return true;
-	}
+	m_previousPosX = position.x;
+	m_previousPosY = position.y;
 
-	m_previousPosX = positionX;
-	m_previousPosY = positionY;
-
-	left = (float)((m_screenWidth / 2) * -1) + (float)positionX;
+	left = (float)position.x;
 
 	right = left + (float)m_bitmapWidth;
 
-	top = (float)(m_screenHeight / 2) - (float)positionY;
+	top = (float)position.y;
 
 	bottom = top - (float)m_bitmapHeight;
 
