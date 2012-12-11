@@ -75,9 +75,6 @@
     <ClInclude Include="GameObject.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -186,15 +183,15 @@
     <ClInclude Include="Graphics\Text.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\ScriptWrappers.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ResourceLoader.cpp">
@@ -275,55 +272,5 @@
     <ClCompile Include="Graphics\ViewPort.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\programdata\avatar.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\avatar.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\color.ps">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\color.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\font.dds">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\font.ps">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\font.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\fontdata.txt">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\music.mp3">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\required.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\seafloor.dds">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\space_frigate_6.modelobj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\space_frigate_6_color.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\test.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\texture.ps">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\programdata\texture.vs">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -18,6 +18,9 @@ typedef D3DXVECTOR4 Vec4;
 
 class Quat : public D3DXQUATERNION {
 public:
+	Quat() : D3DXQUATERNION() {}
+	Quat(Real x, Real y, Real z, Real w) : D3DXQUATERNION(x,y,z,w) {}
+
 	FORCE_INLINE static Quat Identity(){
 		return *reinterpret_cast<Quat*>( D3DXQuaternionIdentity(&Quat()) );
 	}

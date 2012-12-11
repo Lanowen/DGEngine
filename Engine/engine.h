@@ -25,12 +25,12 @@ public:
 	void Run();
 
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
-
+	void RegisterScriptFunctions();
 private:
 	bool Frame();
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
-	void RegisterScriptFunctions();
+	
 
 private:
 	LPCWSTR m_applicationName;

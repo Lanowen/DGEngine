@@ -35,7 +35,7 @@ public:
 		D3DXMatrixRotationQuaternion(&rotation, &ro->rotation);
 		D3DXMatrixScaling(&scale, ro->scale.x, ro->scale.y, ro->scale.z);
 
-		if(!m_TextureShader->Render(deviceContext, GetIndexCount(), worldMatrix*rotation*translation*scale, viewMatrix, projectionMatrix, GetTexture())){
+		if(!m_TextureShader->Render(deviceContext, GetIndexCount(), worldMatrix*rotation*scale*translation, viewMatrix, projectionMatrix, GetTexture())){
 			throw RenderException();
 		}
 	}
@@ -61,7 +61,7 @@ public:
 		D3DXMatrixTranslation(&translation, ro->position.x, ro->position.y, ro->position.z);
 		D3DXMatrixScaling(&scale, ro->scale.x, ro->scale.y, ro->scale.z);
 
-		if(!this->m_FontShader->Render(deviceContext, GetIndexCount(), worldMatrix*translation*scale, viewMatrix, projectionMatrix, GetTexture(), pixelColor)){
+		if(!this->m_FontShader->Render(deviceContext, GetIndexCount(), worldMatrix*scale*translation, viewMatrix, projectionMatrix, GetTexture(), pixelColor)){
 			throw RenderException();
 		}
 	}

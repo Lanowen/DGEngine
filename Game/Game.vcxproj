@@ -71,13 +71,16 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>Engine.lib;luaplus51-1201.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="gameMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameClasses\ChangeCameraView.h" />
     <ClInclude Include="GameClasses\Ship.hpp" />
+    <ClInclude Include="GameClasses\ShipGame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

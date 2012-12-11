@@ -23,7 +23,7 @@ public:
 	void setRotation(Quat rotation){ m_rotation = rotation; };
 	void setScale(Vec3 scale){ m_scale = scale; };
 
-	Vec3 getForward() { Vec3 f(0,0,1); return m_rotation.rotate(f); };
+	virtual Vec3 getForward() { Vec3 f(0,0,1); return m_rotation.rotate(f); };
 
 	virtual void Update(Real deltaTime){};
 	virtual GameObject* findGameObjectByName(std::string findName){

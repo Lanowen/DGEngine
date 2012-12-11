@@ -12,7 +12,6 @@ std::string StaticScriptFunctions::AddEventListener(std::string type, LuaPlus::L
 
 	return 0;
 }
-
 void StaticScriptFunctions::RegisterFunctions(LuaPlus::LuaObject globals){
 	globals.RegisterDirect("AddEventListener", &StaticScriptFunctions::AddEventListener);
 }

@@ -36,6 +36,8 @@ Bitmap::Bitmap(ID3D11Device* device, WCHAR* textureFilename, std::string name) :
 
 	m_bitmapWidth = desc.Width;
 	m_bitmapHeight = desc.Height;
+
+	shared = false;
 }
 
 
@@ -50,14 +52,18 @@ Bitmap::Bitmap(const Bitmap& other) : RenderObject(other)
 	m_bitmapHeight = other.m_bitmapHeight;
 	m_previousPosX = other.m_previousPosX;
 	m_previousPosY = other.m_previousPosY;
+
+	shared = true;
 }
 
 
 Bitmap::~Bitmap()
 {
-	ReleaseTexture();
+	if(!shared){
+		ReleaseTexture();
 
-	ShutdownBuffers();
+		ShutdownBuffers();
+	}
 }
 
 int Bitmap::GetIndexCount()

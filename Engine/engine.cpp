@@ -126,15 +126,13 @@ void Engine::Run(){
 
 			if(deltaTime != 0){
 
-				m_ScriptManager->BeforeUpdate();
-				m_Input->Update();
-				m_AudioSystem->Update(deltaTime);
-			
-				//m_scene->Update(deltaTime);
+				//m_ScriptManager->BeforeUpdate();
+				//m_Input->Update();
+				//m_AudioSystem->Update(deltaTime);
+
 				DGEngineUpdate(deltaTime);
-			
-				
-				m_ScriptManager->AfterUpdate();
+
+				//m_ScriptManager->AfterUpdate();
 
 				
 			}
@@ -158,7 +156,6 @@ bool Engine::Frame(){
 
 	try{
 		DGEngineRender();
-		//m_viewPort->Render();
 	}
 	catch(std::exception& e){
 

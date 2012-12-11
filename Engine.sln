@@ -8,6 +8,26 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj",
 		{577C82EC-335A-43FE-9FDF-CFA60454AF46} = {577C82EC-335A-43FE-9FDF-CFA60454AF46}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "programdata", "programdata", "{17187FF6-C5E4-428D-A30F-753D457BD973}"
+	ProjectSection(SolutionItems) = preProject
+		programdata\avatar.bmp = programdata\avatar.bmp
+		programdata\avatar.jpg = programdata\avatar.jpg
+		programdata\color.ps = programdata\color.ps
+		programdata\color.vs = programdata\color.vs
+		programdata\font.dds = programdata\font.dds
+		programdata\font.ps = programdata\font.ps
+		programdata\font.vs = programdata\font.vs
+		programdata\fontdata.txt = programdata\fontdata.txt
+		programdata\music.mp3 = programdata\music.mp3
+		programdata\required.lua = programdata\required.lua
+		programdata\seafloor.dds = programdata\seafloor.dds
+		programdata\ShipGameScript.lua = programdata\ShipGameScript.lua
+		programdata\space_frigate_6.modelobj = programdata\space_frigate_6.modelobj
+		programdata\space_frigate_6_color.jpg = programdata\space_frigate_6_color.jpg
+		programdata\texture.ps = programdata\texture.ps
+		programdata\texture.vs = programdata\texture.vs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32

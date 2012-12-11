@@ -16,6 +16,11 @@ public:
 		{
 			(*itr)->Update(deltaTime);
 		}
+
+		for (SceneNodesMap::iterator itr = m_sceneNodes.begin(); itr != m_sceneNodes.end(); itr++)
+		{
+			(*itr)->Update(deltaTime);
+		}
 	}
 
 	virtual void Render(ViewPort* viewPort, Mat44 worldMatrix, Mat44 viewMatrix, Mat44 projectionMatrix) {
@@ -27,15 +32,39 @@ public:
 
 		worldMatrix = worldMatrix*rotationMatrix*translationMatrix;
 
-		for (RenderObjectsMap::iterator itr = m_renderObjects.begin(); itr != m_renderObjects.end(); itr++)
+		for (RenderObjectsMap::iterator itr = m_renderObjects.begin(); itr != m_renderObjects.end(); itr++){
+			(*itr)->Render(viewPort, worldMatrix, viewMatrix, projectionMatrix);
+		}
+
+		for (SceneNodesMap::iterator itr = m_sceneNodes.begin(); itr != m_sceneNodes.end(); itr++)
 		{
 			(*itr)->Render(viewPort, worldMatrix, viewMatrix, projectionMatrix);
 		}
 	}
 
-	void addObject(RenderObject* ro){
-		//m_renderObjects[ro->name] = ro;
+	void AddObject(SceneNode* ro){
+		m_sceneNodes.push_back(ro);
+	}
+
+	void AddObject(RenderObject* ro){
 		m_renderObjects.push_back(ro);
+	}
+
+	bool RemoveObject(RenderObject* ro){
+		for (RenderObjectsMap::iterator itr = m_renderObjects.begin(); itr != m_renderObjects.end(); itr++){
+			if((*itr) == ro){
+				m_renderObjects.erase(itr);
+				return true;
+			}
+		}
+
+		for (SceneNodesMap::iterator itr = m_sceneNodes.begin(); itr != m_sceneNodes.end(); itr++)
+		{
+			if((*itr)->RemoveObject(ro))
+				return true;
+		}
+
+		return false;
 	}
 
 	virtual GameObject* findGameObjectByName(std::string findName){
@@ -50,11 +79,39 @@ public:
 				break;
 		}
 
+		if(res)
+			return res;
+
+		for (SceneNodesMap::iterator itr = m_sceneNodes.begin(); itr != m_sceneNodes.end(); itr++)
+		{
+			if(res = (*itr)->findGameObjectByName(findName))
+				break;
+		}
+
 		return res;
+	}
+
+	bool findAndRemoveGameObjectByName(std::string findName){
+		for (RenderObjectsMap::iterator itr = m_renderObjects.begin(); itr != m_renderObjects.end(); itr++){
+			if((*itr)->name == findName){
+				m_renderObjects.erase(itr);
+				return true;
+			}
+		}
+
+		for (SceneNodesMap::iterator itr = m_sceneNodes.begin(); itr != m_sceneNodes.end(); itr++)
+		{
+			if((*itr)->findAndRemoveGameObjectByName(findName))
+				return true;
+		}
+
+		return false;
 	}
 	
 private:
 	//typedef std::unordered_map<std::string, RenderObject*> RenderObjectsMap;
+	typedef std::vector<SceneNode*> SceneNodesMap;
 	typedef std::vector<RenderObject*> RenderObjectsMap;
 	RenderObjectsMap m_renderObjects;
+	SceneNodesMap m_sceneNodes;
 };
